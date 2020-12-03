@@ -1,4 +1,4 @@
-# msem-sw.arch-c4-model-assignment
+# msem-sw.arch-c4-model-assignment Alt+D = preview
 
 Andreas Heil | aheil | Yesterday, 15:01
 ## Appointment on the 30th of November
