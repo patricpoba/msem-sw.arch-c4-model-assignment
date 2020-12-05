@@ -1,5 +1,5 @@
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+@startuml 
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 LAYOUT_WITH_LEGEND()
 
@@ -9,25 +9,39 @@ Person(employee, "Agency Employee", "Internal employee of the health insurance a
 Person(customer, "Health insurance customer", "Customer of the health insurance agency", "user")
 Person(auditor, "External Auditors", "The external auditors of the system")
 
-System_Boundary(c1, "Electronic Health Record Application") {
-
-    System(webApp, "Electronic Health Record Web App", "Allows internal employees to access SPA and static content.")
-
-    System(apiServer, "Api Application", "Provides the overall accounting functionality by providing a synchronous JSON/HTTPS based API")
+System_Boundary(c1, "Electronic Health Record Application") { 
+     
+    Container(webApp, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
+    Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
+    Container(staticContent, "Static Content", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
+    ContainerDb(database, "Database", "SQL Database", "Stores user registraion information, hased auth credentials, access logs, etc.")
+    Container(backend_api, "API Application", "Go, Docker Container", "Provides accounting functionality via API")
 }
-  
+
+' System(apiServer, "Api Application", "Provides the overall accounting functionality by providing a synchronous JSON/HTTPS based API")
+
 System_Ext(emailSystem, "Email System", "The exernal Microsoft Exchange System")
 System_Ext(dataWHS, "Data Warehouse System", "Used by external auditors to access the reporting functionality of the SAP system")
 System_Ext(sapSystem, "SAP System", "SAP R/3 System connected asynchronously using RFC (Remote Function Call)")
+' System_Ext(banking_system, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
 
 
-Rel(employee, webApp, "uses")
-Rel(webApp, apiServer, "accesses functionalities")
-Rel(sapSystem, emailSystem, "sends emails using")
-Rel(emailSystem, customer, "sends email to")
-Rel(sapSystem, dataWHS, "access reportig functionalities")
-Rel(apiServer, sapSystem, "uses")
-' Rel(customer, webApp, "uses")
+Rel(employee, webApp, "uses") 
+Rel(employee, staticContent, "uses") 
+Rel(employee, spa, "uses") 
+
+Rel_Neighbor(webApp, spa, "provides")  
+Rel_Neighbor(webApp, staticContent, "provides")  
+
+Rel(spa, backend_api, "uses", "sync JSON/HTTPS")
+Rel(staticContent, backend_api, "uses", "sync JSON/HTTPS")
+
+Rel_Neighbor(backend_api, database, "writes to and reads from")
+Rel(dataWHS, sapSystem, "access reporting functionalities") 
 Rel(auditor, dataWHS, "uses")
+Rel(emailSystem, customer, "sends email to", "sync, smtp")
 
+Rel(backend_api, emailSystem, "sends email using")
+Rel(backend_api, sapSystem, "depends on", "async, RFC")
+ 
 @enduml
