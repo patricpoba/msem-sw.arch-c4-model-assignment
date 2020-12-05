@@ -1,0 +1,33 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Container Diagram, Level 2: Electronic Health Record Application
+
+Person(employee, "Agency Employee", "Internal employee of the health insurance agency")
+Person(customer, "Health insurance customer", "Customer of the health insurance agency", "user")
+Person(auditor, "External Auditors", "The external auditors of the system")
+
+System_Boundary(c1, "Electronic Health Record Application") {
+
+    System(webApp, "Electronic Health Record Web App", "Allows internal employees to access SPA and static content.")
+
+    System(apiServer, "Api Application", "Provides the overall accounting functionality by providing a synchronous JSON/HTTPS based API")
+}
+  
+System_Ext(emailSystem, "Email System", "The exernal Microsoft Exchange System")
+System_Ext(dataWHS, "Data Warehouse System", "Used by external auditors to access the reporting functionality of the SAP system")
+System_Ext(sapSystem, "SAP System", "SAP R/3 System connected asynchronously using RFC (Remote Function Call)")
+
+
+Rel(employee, webApp, "uses")
+Rel(webApp, apiServer, "accesses functionalities")
+Rel(sapSystem, emailSystem, "sends emails using")
+Rel(emailSystem, customer, "sends email to")
+Rel(sapSystem, dataWHS, "access reportig functionalities")
+Rel(apiServer, sapSystem, "uses")
+' Rel(customer, webApp, "uses")
+Rel(auditor, dataWHS, "uses")
+
+@enduml
