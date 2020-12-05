@@ -11,11 +11,11 @@ Person(auditor, "External Auditors", "The external auditors of the system")
 
 System_Boundary(c1, "Electronic Health Record Application") { 
      
-    Container(webApp, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
-    Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
-    Container(staticContent, "Static Content", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
+    Container(webApp, "Web Application", "Java, Spring Boot", "Delivers the static content and the SPA")
+    Container(spa, "Single-Page App", "Microsoft Blazor", "Provides all the electronic health record keeping functionality to internal employees of agency via their web browser")
+    Container(staticContent, "Static Content", "HTML", "Provides a static content")
     ContainerDb(database, "Database", "SQL Database", "Stores user registraion information, hased auth credentials, access logs, etc.")
-    Container(backend_api, "API Application", "Go, Docker Container", "Provides accounting functionality via API")
+    Container(apiServer, "API Application", "Go, Docker Container", "Provides accounting functionality via API")
 }
 
 ' System(apiServer, "Api Application", "Provides the overall accounting functionality by providing a synchronous JSON/HTTPS based API")
@@ -23,7 +23,7 @@ System_Boundary(c1, "Electronic Health Record Application") {
 System_Ext(emailSystem, "Email System", "The exernal Microsoft Exchange System")
 System_Ext(dataWHS, "Data Warehouse System", "Used by external auditors to access the reporting functionality of the SAP system")
 System_Ext(sapSystem, "SAP System", "SAP R/3 System connected asynchronously using RFC (Remote Function Call)")
-' System_Ext(banking_system, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+
 
 
 Rel(employee, webApp, "uses") 
@@ -33,15 +33,15 @@ Rel(employee, spa, "uses")
 Rel_Neighbor(webApp, spa, "provides")  
 Rel_Neighbor(webApp, staticContent, "provides")  
 
-Rel(spa, backend_api, "uses", "sync JSON/HTTPS")
-Rel(staticContent, backend_api, "uses", "sync JSON/HTTPS")
+Rel(spa, apiServer, "uses", "sync JSON/HTTPS")
+Rel(staticContent, apiServer, "uses", "sync JSON/HTTPS")
 
-Rel_Neighbor(backend_api, database, "writes to and reads from")
+Rel_Neighbor(apiServer, database, "writes to and reads from")
 Rel(dataWHS, sapSystem, "access reporting functionalities") 
 Rel(auditor, dataWHS, "uses")
 Rel(emailSystem, customer, "sends email to", "sync, smtp")
 
-Rel(backend_api, emailSystem, "sends email using")
-Rel(backend_api, sapSystem, "depends on", "async, RFC")
+Rel(apiServer, emailSystem, "sends email using")
+Rel(apiServer, sapSystem, "depends on", "async, RFC")
  
 @enduml
