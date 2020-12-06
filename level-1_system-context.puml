@@ -10,22 +10,14 @@ Person(customer, "Health insurance customer", "Customer of the health insurance 
 Person(auditor, "External Auditors", "The external auditors of the system")
 
 System(app, "Electronic Health Record Application", "Allows internal employees to access SPA and static content.")
-
-' System(apiServer, "Api Application", "Provides the overall accounting functionality by providing a synchronous JSON/HTTPS based API")
-
+ 
 System_Ext(emailSystem, "Email System", "The exernal Microsoft Exchange System")
 System_Ext(dataWHS, "Data Warehouse System", "Used by external auditors to access the reporting functionality of the SAP system")
-' System_Ext(sapSystem, "SAP System", "SAP R/3 System connected asynchronously using RFC (Remote Function Call)")
-
-Rel(employee, app, "uses")
-' Rel(app, apiServer, "accesses functionalities")
+ 
+Rel(employee, app, "uses") 
 Rel(app, emailSystem, "sends emails using")
 Rel(emailSystem, customer, "sends email to")
-Rel(app, dataWHS, "access reportig functionalities")
-' Rel(apiServer, sapSystem, "uses")
-' Rel(customer, app, "uses")
+Rel(dataWHS, app, "access reportig functionalities") 
 Rel(auditor, dataWHS, "uses")
-
- 
 
 @enduml
