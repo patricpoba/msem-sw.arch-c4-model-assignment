@@ -3,9 +3,9 @@
 
 LAYOUT_WITH_LEGEND()
 
-title System Context, Level 1: Electronic Health Record Application
+title System Context diagram for Electronic Health Record Application
 
-Person(employee, "Agency Employee", "Internal employee of the health insurance agency")
+Person(employee, "Internal Employee", "Internal employee of the health insurance agency")
 Person(customer, "Health insurance customer", "Customer of the health insurance agency", "user")
 Person(auditor, "External Auditors", "The external auditors of the system")
 

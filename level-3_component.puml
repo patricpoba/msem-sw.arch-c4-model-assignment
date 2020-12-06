@@ -1,10 +1,43 @@
 @startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Component.puml
 
 LAYOUT_WITH_LEGEND()
 
-title Component Diagram, Level 3: Electronic Health Record Application
+title Component diagram for Electronic Health Record Application
 
-  
+Container(spa, "Single Page Application", "Micrsoft Blazor", "Provides all the internet banking functionality to customers via their web browser.")
+ContainerDb(db, "Database", "Relational Database Schema", "Stores customer health records, hased auth credentials, access logs, etc.")
+System_Ext(sap, "SAP R/3 System", "Provides accounting functionality")
 
+Container_Boundary(api, "API Application") {
+    Component(sign, "Sign In Controller", "MVC Rest Controller", "Allows internal employees to sign in to the health record system")
+    Component(records, "Health Records Controller", "MVC Rest Controller", "Provides employes with a summary of the health records of the customers")
+    Component(resetPassword, "Reset Password Controller", "Spring MVC Rest Controller", "Allows employees to reset their password by using a given single url")
+    Component(security, "Security Component", "Spring Bean", "Provides functionality related to singing in, changing passwords, etc.")
+    ' Component(sapfacade, "Mainframe health record Facade", "Spring Bean", "A facade onto the mainframe health record.")
+    Component(sapfacade,  "SAP R/3 System Facade", "Spring Bean", "A facade onto SAP R/3 System")
+    Component(emailSystem, "Email System", "Component spring bean", "Used in sending out emails")
+
+    Rel(sign, security, "Uses")
+    Rel(records, sapfacade, "Uses")
+    Rel(security, db, "Read & write to", "JDBC")
+    Rel(sapfacade, sap, "Uses", "async, RFC")
+}
+
+System_Ext(emailServer, "Email System", "The exernal Microsoft Exchange System")
+System_Ext(dataWHS, "Data Warehouse System", "Accesses the reporting functionality of the SAP system")
+
+
+
+Rel(spa, sign, "Uses", "JSON/HTTPS")
+Rel(spa, records, "Uses", "JSON/HTTPS")
+Rel(spa, resetPassword, "Uses", "JSON/HTTPS")
+
+Rel(resetPassword, emailSystem, "Uses", "JSON/HTTPS")
+Rel(emailSystem, emailServer, "Uses", "JSON/HTTPS")
+
+Rel(dataWHS, sap, "Uses", "proprietary SQL implementation")
+' Rel(ma, records, "Uses", "JSON/HTTPS")
 @enduml
